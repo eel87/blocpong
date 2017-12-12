@@ -1,0 +1,7 @@
+#background_canvas {
+  display: block;
+  background-color: black;
+  border: 2px solid;
+  border-color: red;
+  margin: 20px auto ;
+}
