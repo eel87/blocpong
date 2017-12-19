@@ -1,7 +1,7 @@
 var canvas = document.getElementById("background_canvas");
 var canvas_context = canvas.getContext("2d");
 
-function Paddle(x, y, width, height) {
+var Paddle = function(x, y, width, height) {
   canvas_context.fillStyle="#FFFFFF";
   canvas_context.fillRect(x, y, width, height);
 }
