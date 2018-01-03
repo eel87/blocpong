@@ -34,10 +34,13 @@ function render() {
   new Ball;
 }
 
+<<<<<<< HEAD
 var animate = window.requestAnimationFrame || function(callback) {
   window.setTimeout(callback, 1000/60)
 };
 
+=======
+>>>>>>> chkpt-2-add-visuals
 window.onload = function() {
   render();
 }
