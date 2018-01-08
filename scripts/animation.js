@@ -1,7 +1,7 @@
 // Rate of game updates per second
 var FPS = 60;
 // Displacement constant of pixels per second
-var PADDLE_SPEED = 100;
+var PADDLE_SPEED = 200;
 var BALL_SPEED = 100;
 
 var canvas = document.getElementById("screen");
@@ -27,7 +27,32 @@ Element.prototype.draw = function() {
   ctx.fillStyle = "#FFFFFF"
   ctx.fillRect(this.x, this.y, this.width, this.height);
 };
-
+// Add movement
+Element.prototype.move = function() {
+  for (var i=0; i < elements.length; i++) {
+    el = elements[i];
+    if (el == this) {
+      //don't check collision against yourself
+      continue;
+    }
+    // bounce on horizontal collision
+    if ((this.top() < el.bottom() && this.bottom() > el.top()) &&
+        (this.right() < el.left() && this.right() + this.vx >= el.left() ||
+         this.left() > el.right() && this.left() + this.vx <= el.right())) {
+      this.vx = -this.vx;
+      break;
+    }
+    // bounce on vertical collision
+    if ((this.left() < el.right() && this.right() > el.left()) &&
+        (this.bottom() < el.top() && this.bottom() + this.vy >= el.top() ||
+         this.top() > el.bottom() && this.top() + this.vy <= el.bottom())) {
+      this.vy = -this.vy;
+      break;
+    }
+  }
+    this.x += this.vx;
+    this.y += this.vy;
+};
 // Helper prototype functions that return left and right x values, bottom and top y values of each element.
 Element.prototype.left = function() {
   return this.x;
@@ -42,50 +67,50 @@ Element.prototype.bottom = function() {
   return this.y + this.height;
 };
 
-// Add movement
-Element.prototype.move = function() {
-  for (var i=0; i < elements.length; i++) {
-    el = elements[i];
-    if (elements[i] == this) {
-      //don't check collision against yourself
-      continue;
-    }
-    // bounce on horizontal collision
-    if ((this.top() < el.bottom() && this.bottom() > el.top()) &&
-        (this.right() < el.left() && this.right() + this.vx >= el.left() ||
-         this.left() > el.right() && this.left() + this.vx < el.right())) {
-      this.vx = -this.vx;
-      break;
-    }
-    // bounce on vertical collision
-    if ((this.right() > el.left() && this.left() < el.right()) &&
-       (this.top() > el.bottom() && this.top + this.vy <= el.bottom() ||
-        this.bottom() < el.top && this.bottom() + this.vy >= el.top())) {
-      this.vy = -this.vy;
-      break;
-    }
-  }
-    this.x += this.vx;
-    this.y += this.vy;
-};
-
 var computer = new Element(10, 180, 12, 120);
 var player = new Element(700, 180, 12, 120);
-var ball = new Element(360, 240, 10, 10, BALL_SPEED/FPS, 0);
+var ball = new Element(360, 240, 10, 10,  -1 * BALL_SPEED / FPS, 0.9 * BALL_SPEED / FPS) ;
+// create top and bottom walls
+var topWall = new Element(0, 0, 719, 1);
+var bottomWall = new Element(0, 479, 720, 1);
 
 // Render the elements
 computer.draw();
 player.draw();
 ball.draw();
 
+// Control player paddle
+window.onkeydown = function(event) {
+  // go up if up arrow pressed
+  if (event.keyCode === 38) {
+    player.vy = -PADDLE_SPEED/FPS;
+  }
+  // go down if down arrow pressed
+  if (event.keyCode === 40) {
+    player.vy = PADDLE_SPEED/FPS;
+  }
+}
+window.onkeyup = function(event) {
+  player.vy = 0;
+}
+
 // Game loop
 var gameLoop = function() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (var i = 0; i < elements.length; i++) {
-    elements[i].move();
     elements[i].draw();
+    elements[i].move();
+  }
+  // game rules
+  if (ball.right() > canvas.width) {
+    ball.x = 360;
+    ball.y = 240;
+  } else if (ball.left() < 0) {
+    ball.x = 360;
+    ball.y = 240;
   }
 };
+
 setInterval(gameLoop, 1000/FPS);
 
 
