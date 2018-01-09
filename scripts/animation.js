@@ -1,8 +1,8 @@
 // Rate of game updates per second
 var FPS = 60;
 // Displacement constant of pixels per second
-var PADDLE_SPEED = 200;
-var BALL_SPEED = 100;
+var PADDLE_SPEED = 360;
+var BALL_SPEED = 300;
 
 var canvas = document.getElementById("screen");
 var ctx = canvas.getContext("2d");
@@ -67,17 +67,21 @@ Element.prototype.bottom = function() {
   return this.y + this.height;
 };
 
-var computer = new Element(10, 180, 12, 120);
-var player = new Element(700, 180, 12, 120);
-var ball = new Element(360, 240, 10, 10,  -1 * BALL_SPEED / FPS, 0.9 * BALL_SPEED / FPS) ;
+var computer = new Element(5, 150, 15, 100);
+var player = new Element(580, 150, 15, 100);
+var ball = new Element(300, 200, 10, 10,  -1 * BALL_SPEED / FPS, 0.9 * BALL_SPEED / FPS) ;
 // create top and bottom walls
-var topWall = new Element(0, 0, 719, 1);
-var bottomWall = new Element(0, 479, 720, 1);
+var topWall = new Element(0, -1, 600, 1);
+var bottomWall = new Element(0, 400, 600, 1);
 
 // Render the elements
-computer.draw();
-player.draw();
-ball.draw();
+function render() {
+  computer.draw();
+  player.draw();
+  ball.draw();
+}
+
+window.onload = render();
 
 // Control player paddle
 window.onkeydown = function(event) {
@@ -94,6 +98,18 @@ window.onkeyup = function(event) {
   player.vy = 0;
 }
 
+// Computer AI
+var ai = function(paddle) {
+  var prediction = (ball.vx/ball.vy) * (paddle.x - ball.x) + ball.y;
+  if (prediction < paddle.top() + paddle.height * 1/8) {
+    paddle.vy = -PADDLE_SPEED / FPS;
+  } else if (prediction > paddle.top() + paddle.height * 1/8) {
+    paddle.vy = PADDLE_SPEED / FPS;
+  } else {
+    paddle.vy = 0;
+  }
+};
+
 // Game loop
 var gameLoop = function() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -101,6 +117,7 @@ var gameLoop = function() {
     elements[i].draw();
     elements[i].move();
   }
+  ai(computer);
   // game rules
   if (ball.right() > canvas.width) {
     ball.x = 360;
@@ -111,7 +128,10 @@ var gameLoop = function() {
   }
 };
 
-setInterval(gameLoop, 1000/FPS);
+// Begin game on click
+window.onclick = function(event) {
+  setInterval(gameLoop, 1000/FPS);
+};
 
 
 // var Paddle = function(x, y, width, height, speed) {
