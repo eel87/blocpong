@@ -74,11 +74,29 @@ var ball = new Element(300, 200, 10, 10,  -1 * BALL_SPEED / FPS, 0.9 * BALL_SPEE
 var topWall = new Element(0, -1, 600, 1);
 var bottomWall = new Element(0, 400, 600, 1);
 
+// Keep Score
+var player_score = 0;
+var computer_score = 0;
+var display_player_score = function() {
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "25px Impact";
+  ctx.fillText(player_score, 450, 30);
+  // document.getElementById("player_score").innerHTML = player_score;
+};
+var display_computer_score = function() {
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "25px Impact";
+  ctx.fillText(computer_score,150,30);
+};
+  // document.getElementById("computer_score").innerHTML = computer_score;
+
 // Render the elements
 function render() {
   computer.draw();
   player.draw();
   ball.draw();
+  display_computer_score();
+  display_player_score();
 }
 
 window.onload = render();
@@ -118,14 +136,19 @@ var gameLoop = function() {
     elements[i].move();
   }
   ai(computer);
+
   // game rules
   if (ball.right() > canvas.width) {
     ball.x = 360;
     ball.y = 240;
+    computer_score++;
   } else if (ball.left() < 0) {
     ball.x = 360;
     ball.y = 240;
+    player_score++;
   }
+  display_computer_score();
+  display_player_score();
 };
 
 // Begin game on click
@@ -134,65 +157,11 @@ window.onclick = function(event) {
 };
 
 
-// var Paddle = function(x, y, width, height, speed) {
-//   canvas_context.fillStyle="#FFFFFF";
-//   canvas_context.fillRect(x, y, width, height);
-//   this.y = y;
-//   this.move = function() {
-//     this.y = this.y + 50
-//   }
-// };
-//
-// var Ball = function() {
-//   var x = canvas.width / 2;
-//   var y = canvas.height / 2;
-//   var radius = 3;
-//   var startAngle = 0 * Math.PI;
-//   var endAngle = 2 * Math.PI;
-//
-//   canvas_context.beginPath();
-//   canvas_context.arc(x, y, radius, startAngle, endAngle);
-//   canvas_context.lineWidth = 6;
-//   canvas_context.strokeStyle = 'white';
-//   canvas_context.stroke();
-// };
-//
-// var player = new Paddle(610,100,15,100);
-//
-// var computer = new Paddle(20,200,15,100);
-//
-// var ball = new Ball();
-//
-// function render() {
-//   computer;
-//   player;
-//   ball;
-// }
-//
-// var step = function() {
-//   console.log('foo')
-//   render();
-//   player.move();
-//   animate(step);
-// };
-//
+
+
 // var animate = function(callback) {
 //   window.requestAnimationFrame(callback) ||
 //     function(callback) {
 //       window.setTimeout(callback, 1000/60)
 //     };
 // }
-//
-// var movePaddle = function(e) {
-//   if (e.keyCode == "40") {
-//     animate(step);
-//   } else if (e.keyCode == "38") {
-//     animate(step);
-//   }
-// }
-//
-// window.onload = function() {
-//   render();
-// }
-//
-// window.addEventListener("keydown", movePaddle);
