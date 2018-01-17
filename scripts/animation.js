@@ -22,6 +22,14 @@ var Element = function(x, y, width, height, vx, vy) {
   elements.push(this);
 };
 
+//Stop movement
+Element.prototype.stop = function() {
+  this.x = this.x;
+  this.y = this.y;
+  this.vx = this.vx;
+  this.vy = this.vy;
+};
+
 //Element prototype to draw the game elements
 Element.prototype.draw = function() {
   ctx.fillStyle = "#FFFFFF"
@@ -77,29 +85,33 @@ var bottomWall = new Element(0, 400, 600, 1);
 // Keep Score
 var player_score = 0;
 var computer_score = 0;
+
 var display_player_score = function() {
   ctx.fillStyle = "#FFFFFF";
   ctx.font = "25px Impact";
   ctx.fillText(player_score, 450, 30);
-  // document.getElementById("player_score").innerHTML = player_score;
 };
+
 var display_computer_score = function() {
   ctx.fillStyle = "#FFFFFF";
   ctx.font = "25px Impact";
   ctx.fillText(computer_score,150,30);
 };
-  // document.getElementById("computer_score").innerHTML = computer_score;
 
-// Render the elements
-function render() {
-  computer.draw();
-  player.draw();
-  ball.draw();
-  display_computer_score();
-  display_player_score();
-}
+// display who wins
+var computer_wins = function() {
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "25px Arial Bold";
+  ctx.fillText("Game over. You lose!", 200, 200);
+  ctx.fillText("Reload the page to play again.", 160, 230);
+};
 
-window.onload = render();
+var player_wins = function() {
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "25px Arial Bold";
+  ctx.fillText("Game over. You win!", 200, 200);
+  ctx.fillText("Reload the page to play again.", 160, 230);
+};
 
 // Control player paddle
 window.onkeydown = function(event) {
@@ -134,22 +146,44 @@ var gameLoop = function() {
   for (var i = 0; i < elements.length; i++) {
     elements[i].draw();
     elements[i].move();
+    ai(computer);
+    if (computer_score >= 2) {
+      computer_wins();
+      display_player_score();
+      display_computer_score();
+      return;
+    }
+    if(player_score >= 2) {
+      player_wins();
+      display_player_score();
+      display_computer_score();
+      return;
+    }
   }
-  ai(computer);
-
-  // game rules
   if (ball.right() > canvas.width) {
-    ball.x = 360;
-    ball.y = 240;
+    ball.x = 300;
+    ball.y = 200;
     computer_score++;
-  } else if (ball.left() < 0) {
-    ball.x = 360;
-    ball.y = 240;
+  }
+  if (ball.left() < 0) {
+    ball.x = 300;
+    ball.y = 200;
     player_score++;
   }
   display_computer_score();
   display_player_score();
 };
+
+// Render the elements
+function render() {
+  computer.draw();
+  player.draw();
+  ball.draw();
+  display_computer_score();
+  display_player_score();
+}
+
+window.onload = render();
 
 // Begin game on click
 window.onclick = function(event) {
