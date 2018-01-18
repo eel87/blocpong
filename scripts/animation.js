@@ -1,8 +1,8 @@
 // Rate of game updates per second
 var FPS = 60;
 // Displacement constant of pixels per second
-var PADDLE_SPEED = 360;
-var BALL_SPEED = 300;
+var PADDLE_SPEED = 10;
+var BALL_SPEED = 5;
 
 var canvas = document.getElementById("screen");
 var ctx = canvas.getContext("2d");
@@ -77,7 +77,7 @@ Element.prototype.bottom = function() {
 
 var computer = new Element(5, 150, 15, 100);
 var player = new Element(580, 150, 15, 100);
-var ball = new Element(300, 200, 10, 10,  -1 * BALL_SPEED / FPS, 0.9 * BALL_SPEED / FPS);
+var ball = new Element(300, 200, 10, 10, BALL_SPEED, BALL_SPEED);
 
 // create top and bottom walls
 var topWall = new Element(0, -1, 600, 1);
@@ -118,15 +118,15 @@ var player_wins = function() {
 window.onkeydown = function(event) {
   // go up if up arrow pressed
   if (event.keyCode === 38) {
-    player.vy = -PADDLE_SPEED/FPS;
+    player.vy = -PADDLE_SPEED;
   }
   // go down if down arrow pressed
   if (event.keyCode === 40) {
-    player.vy = PADDLE_SPEED/FPS;
+    player.vy = PADDLE_SPEED;
   }
   // press enter to start game
   if (event.keyCode === 13) {
-    setInterval(gameLoop, 1000/FPS);
+    requestAnimationFrame(gameLoop);
   }
 }
 window.onkeyup = function(event) {
@@ -137,9 +137,9 @@ window.onkeyup = function(event) {
 var ai = function(paddle) {
   var prediction = (ball.vx/ball.vy) * (paddle.x - ball.x) + ball.y;
   if (prediction < paddle.top() + paddle.height * 1/8) {
-    paddle.vy = -PADDLE_SPEED / FPS;
+    paddle.vy = -PADDLE_SPEED;
   } else if (prediction > paddle.top() + paddle.height * 1/8) {
-    paddle.vy = PADDLE_SPEED / FPS;
+    paddle.vy = PADDLE_SPEED;
   } else {
     paddle.vy = 0;
   }
@@ -185,16 +185,12 @@ var gameLoop = function() {
   ctx.stroke();
   display_computer_score();
   display_player_score();
+  window.requestAnimationFrame(gameLoop);
 };
 
 window.onload = function() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#FFFFFF";
-  // ctx.beginPath();
-  // ctx.setLineDash([5, 15]);
-  // ctx.moveTo(300, 0);
-  // ctx.lineTo(300, 400);
-  // ctx.stroke();
   ctx.font = "25px Arial Bold";
   ctx.fillText("Press 'Enter' to start game.", 180, 200);
   ctx.fillText("Use arrow keys to control the paddle.", 130, 225);
