@@ -88,14 +88,14 @@ var computer_score = 0;
 
 var display_player_score = function() {
   ctx.fillStyle = "#FFFFFF";
-  ctx.font = "25px Impact";
-  ctx.fillText(player_score, 450, 30);
+  ctx.font = "20px Helvetica";
+  ctx.fillText("Player: "+ player_score, 390, 30);
 };
 
 var display_computer_score = function() {
   ctx.fillStyle = "#FFFFFF";
-  ctx.font = "25px Impact";
-  ctx.fillText(computer_score,150,30);
+  ctx.font = "20px Helvetica";
+  ctx.fillText("Computer: " + computer_score, 100, 30);
 };
 
 // display who wins
@@ -113,7 +113,7 @@ var player_wins = function() {
   ctx.fillText("Reload the page to play again.", 160, 230);
 };
 
-// Control player paddle
+// Control player paddle and begin game
 window.onkeydown = function(event) {
   // go up if up arrow pressed
   if (event.keyCode === 38) {
@@ -122,6 +122,10 @@ window.onkeydown = function(event) {
   // go down if down arrow pressed
   if (event.keyCode === 40) {
     player.vy = PADDLE_SPEED/FPS;
+  }
+  // press enter to start game
+  if (event.keyCode === 13) {
+    setInterval(gameLoop, 1000/FPS);
   }
 }
 window.onkeyup = function(event) {
@@ -147,13 +151,15 @@ var gameLoop = function() {
     elements[i].draw();
     elements[i].move();
     ai(computer);
-    if (computer_score >= 2) {
+    if (computer_score >= 11) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       computer_wins();
       display_player_score();
       display_computer_score();
       return;
     }
-    if(player_score >= 2) {
+    if(player_score >= 11) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       player_wins();
       display_player_score();
       display_computer_score();
@@ -174,28 +180,14 @@ var gameLoop = function() {
   display_player_score();
 };
 
-// Render the elements
-function render() {
+window.onload = function() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "25px Arial Bold";
+  ctx.fillText("Press 'Enter' to start game.", 180, 200);
+  ctx.fillText("Use arrow keys to control the paddle.", 130, 225);
   computer.draw();
   player.draw();
-  ball.draw();
   display_computer_score();
   display_player_score();
-}
-
-window.onload = render();
-
-// Begin game on click
-window.onclick = function(event) {
-  setInterval(gameLoop, 1000/FPS);
 };
-
-
-
-
-// var animate = function(callback) {
-//   window.requestAnimationFrame(callback) ||
-//     function(callback) {
-//       window.setTimeout(callback, 1000/60)
-//     };
-// }
