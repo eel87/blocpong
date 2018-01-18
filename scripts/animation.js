@@ -77,7 +77,8 @@ Element.prototype.bottom = function() {
 
 var computer = new Element(5, 150, 15, 100);
 var player = new Element(580, 150, 15, 100);
-var ball = new Element(300, 200, 10, 10,  -1 * BALL_SPEED / FPS, 0.9 * BALL_SPEED / FPS) ;
+var ball = new Element(300, 200, 10, 10,  -1 * BALL_SPEED / FPS, 0.9 * BALL_SPEED / FPS);
+
 // create top and bottom walls
 var topWall = new Element(0, -1, 600, 1);
 var bottomWall = new Element(0, 400, 600, 1);
@@ -176,6 +177,12 @@ var gameLoop = function() {
     ball.y = 200;
     player_score++;
   }
+  ctx.strokeStyle="#FFFFFF";
+  ctx.beginPath();
+  ctx.setLineDash([10, 15]);
+  ctx.moveTo(300, 0);
+  ctx.lineTo(300, 400);
+  ctx.stroke();
   display_computer_score();
   display_player_score();
 };
@@ -183,6 +190,11 @@ var gameLoop = function() {
 window.onload = function() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#FFFFFF";
+  // ctx.beginPath();
+  // ctx.setLineDash([5, 15]);
+  // ctx.moveTo(300, 0);
+  // ctx.lineTo(300, 400);
+  // ctx.stroke();
   ctx.font = "25px Arial Bold";
   ctx.fillText("Press 'Enter' to start game.", 180, 200);
   ctx.fillText("Use arrow keys to control the paddle.", 130, 225);
