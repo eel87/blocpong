@@ -1,5 +1,3 @@
-// Rate of game updates per second
-var FPS = 60;
 // Displacement constant of pixels per second
 var PADDLE_SPEED = 10;
 var BALL_SPEED = 5;
@@ -22,19 +20,12 @@ var Element = function(x, y, width, height, vx, vy) {
   elements.push(this);
 };
 
-//Stop movement
-Element.prototype.stop = function() {
-  this.x = this.x;
-  this.y = this.y;
-  this.vx = this.vx;
-  this.vy = this.vy;
-};
-
 //Element prototype to draw the game elements
 Element.prototype.draw = function() {
   ctx.fillStyle = "#FFFFFF"
   ctx.fillRect(this.x, this.y, this.width, this.height);
 };
+
 // Add movement
 Element.prototype.move = function() {
   for (var i=0; i < elements.length; i++) {
@@ -61,6 +52,7 @@ Element.prototype.move = function() {
     this.x += this.vx;
     this.y += this.vy;
 };
+
 // Helper prototype functions that return left and right x values, bottom and top y values of each element.
 Element.prototype.left = function() {
   return this.x;
